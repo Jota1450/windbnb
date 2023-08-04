@@ -12,6 +12,8 @@ let form = ref({
     children: 0
 })
 
+let focus = ref(true)
+
 function getFilteredCities() {
     return cities.filter(
         (city) => city.toLowerCase().includes(form.value.location.toLowerCase())
@@ -27,36 +29,41 @@ function handleSubmit() {
 <template>
     <div id="curtain" class="fixed w-screen h-screen z-[5] top-0 left-0 bg-neutral-600 bg-opacity-40 hidden"
         @click="toggleDrawer"></div>
-    <div id="main-drawer" class="fixed bg-white w-full h-1/2 z-10 top-[-100vh] left-0 px-5 mx-0 my-auto custom-transition">
-        <div id="drawer-content" class="max-w-[1200px] mx-auto my-5 font-mulish flex gap-x-2 flex-col md:flex-row">
+    <div id="main-drawer"
+        class="fixed bg-white w-full h-3/4 md:h-1/2 z-10 top-[-100vh] left-0 px-5 mx-0 my-auto custom-transition">
+        <div id="drawer-content" class="max-w-[1200px] mx-auto py-5 h-full font-mulish flex gap-x-2 flex-col md:flex-row">
             <div class="flex flex-col gap-y-2 flex-grow">
+                <div class="md:hidden">
+                    Edit your search
+                </div>
                 <div class="flex gap-2 flex-col md:flex-row">
                     <div class="select">
-                        <label for="" class="block text-[9px] uppercase font-bold">
+                        <label for="location" class="block text-[9px] uppercase font-bold">
                             LOCATION
                         </label>
-                        <input v-model="form.location" type="text" placeholder="Helsinki, Finland"
-                            class="block outline-none w-full text-[14px]">
+                        <input id="location" v-model="form.location" @focus="focus = true" type="text"
+                            placeholder="Helsinki, Finland" class="block outline-none w-full text-[14px]">
                     </div>
                     <div class="select">
-                        <label for="" class="block text-[9px] uppercase font-bold">
+                        <label for="guests" class="block text-[9px] uppercase font-bold">
                             GUESTS
                         </label>
-                        <input :value="form.adults + form.children" type="text" placeholder="Add guests"
-                            class="block outline-none w-full text-[14px]" readonly>
+                        <input id="guests" :value="form.adults + form.children" @focus="focus = false" type="text"
+                            placeholder="Add guests" class="block outline-none w-full text-[14px]" readonly>
                     </div>
                 </div>
                 <div class="flex gap-x-2">
-                    <div class="w-full ml-4">
-                        <ul>
-                            <li v-for="city in getFilteredCities()" class="flex gap-3 my-7 cursor-pointer relative hover:bottom-[2px] active:top-0"
+                    <div class="md:w-full ml-2 md:ml-4">
+                        <ul v-show="focus">
+                            <li v-for="city in getFilteredCities()"
+                                class="flex gap-3 my-7 cursor-pointer relative hover:bottom-[2px] active:top-0"
                                 @click="form.location = city">
                                 <img src="../../../assets/location.svg" alt=""> {{ city }}
                             </li>
                         </ul>
                     </div>
-                    <div class="w-full ml-4">
-                        <div class="">
+                    <div class="md:w-full ml-2 md:ml-4">
+                        <div  v-show="!focus">
                             <div class="my-7">
                                 <CounterInput v-model="form.adults" title="Adults" label="Ages 13 or above" />
                             </div>
